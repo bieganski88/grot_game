@@ -11,14 +11,14 @@ Class find longest chain on given board.
 import copy
 
 # sample data
-sample = [
+SAMPLE = [
     ['u', 'd', 'u', 'u'], # ↑ ↓ ↑ ↑
     ['u', 'r', 'l', 'l'], # ↑ → ← ←
     ['u', 'u', 'l', 'u'], # ↑ ↑ ← ↑
     ['l', 'd', 'u', 'l'], # ← ↓ ↑ ←
 ]
 
-sample2 = [
+SAMPLE2 = [
     ['r', 'r', 'r', 'd'], # → → → ↓
     ['d', 'l', 'l', 'l'], # ↓ ← ← ←
     ['r', 'r', 'r', 'd'], # → → → ↓
@@ -31,13 +31,13 @@ class GrotGame(object):
     '''
     Class find longest chain on given board.
     'find_best' method return coordinates of best start point.
-    
+
     Logic based on rules of this game:
     http://grot.hackathons.stxnext.pl/game.html
-    '''   
-    
-    def __init__(self, board, startposition=(0,0)):
-        '''   
+    '''
+
+    def __init__(self, board, startposition=(0, 0)):
+        '''
         Initialization. Assigns boards to the game and calculate its size.
         '''
         self._start_board = copy.deepcopy(board) # initial board
@@ -45,8 +45,8 @@ class GrotGame(object):
         self._height = len(self._board)
         self._width = len(self._board[0])
         self.position = startposition
-    
-    
+
+
     def __str__(self):
         '''
         Displays the current board in accordance with the declared
@@ -60,7 +60,7 @@ class GrotGame(object):
         '''
         Prints current board.
         '''
-        wizualizacja = { 'u': '↑', 'd': '↓', 'l': '←', 'r': '→', 'x': 'x'}  
+        wizualizacja = {'u': '↑', 'd': '↓', 'l': '←', 'r': '→', 'x': 'x'}
         content = ''
         for row in board:
             for element in row:
@@ -70,7 +70,7 @@ class GrotGame(object):
         print content
 
 
-    def find_best(self, log=False):
+    def find_best(self):
         '''
         It takes all possible scenarios and searching the best.
         As the optimum should be understood that with the longest sequence.
@@ -79,13 +79,13 @@ class GrotGame(object):
         # iteruje po calej planszy
         for row in range(self._width):
             for column in range(self._height):
-                pos = (row,column)
-                results[pos]=self.play_sequence(board=copy.deepcopy(self._board),
-                                                position=pos)
+                pos = (row, column)
+                results[pos] = self.play_sequence(board=copy.deepcopy(self._board),
+                                                  position=pos)
 
         seq_length = {key: len(value) for key, value in results.iteritems()}
         longest = max(seq_length, key=seq_length.get)
-        
+
         print '** Longest sequence **'
         print 'Start position: {}; Length of sequence: {}'.format(longest, seq_length[longest])
         print 'Steps: {}\n'.format(results[longest])
@@ -101,14 +101,15 @@ class GrotGame(object):
         sequence.append(position)
 
         end_game = False
-        
+
         while end_game is False:
             #print 'RUCH: {}'.format(position)
             end_game, position = self.move(position, board)
             if position:
                 sequence.append(position)
             if end_game is True:
-                print 'Start position: {}; Length of sequence: {}'.format(sequence[0], len(sequence))
+                print 'Start position: {}; Length of sequence: {}'.format(sequence[0],
+                                                                          len(sequence))
                 print 'Board after move:'
                 self.print_board(board)
 
@@ -133,14 +134,14 @@ class GrotGame(object):
 
         # changing the value that you can't use it again
         board[row][column] = 'x'
-        
+
         new_column, new_row = column, row
         new_direction = False
-        
+
         # flags
         found = False # true if next move is possible
         end_game = False # true if next move is impossible
-        
+
         while not found and not end_game:
             # some logic
             if direction == 'u':
@@ -160,16 +161,16 @@ class GrotGame(object):
             else:
                 end_game = True
                 return end_game, None
-            
-            # 'X' Means that field was used earlier 
+
+            # 'X' Means that field was used earlier
             if new_direction and new_direction != 'x':
                 found = True
-        
+
         if end_game is True:
             return end_game, []
         else:
             return end_game, [new_row, new_column]
 
 
-x = GrotGame(sample2)
-best = x.find_best()
+game = GrotGame(SAMPLE2)
+longest_chain = game.find_best()
